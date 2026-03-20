@@ -1,0 +1,23 @@
+# Compilados Java
+*.class
+
+# Carpeta de salida
+out/
+bin/
+build/
+target/
+
+# Logs
+*.log
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# Configuración local de VSCode
+.vscode/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+desktop.ini
