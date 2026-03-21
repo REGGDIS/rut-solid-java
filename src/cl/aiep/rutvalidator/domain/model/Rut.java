@@ -17,4 +17,8 @@ public class Rut {
     public String getDv() {
         return dv;
     }
+
+    public String getFullRut() {
+        return number + "-" + dv;
+    }
 }

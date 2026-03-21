@@ -8,7 +8,7 @@ public class RutFormatter implements DocumentFormatter {
     @Override
     public String format(String rawValue) {
         if (rawValue == null) {
-            return null;
+            return "";
         }
 
         return rawValue
