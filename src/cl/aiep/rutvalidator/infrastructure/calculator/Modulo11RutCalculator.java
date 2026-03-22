@@ -1,4 +1,4 @@
-// Calcula el dígito verificador con el algoritmo módulo 11 para RUT.
+// Implementación del cálculo del dígito verificador de un RUT mediante el algoritmo módulo 11.
 package cl.aiep.rutvalidator.infrastructure.calculator;
 
 import cl.aiep.rutvalidator.domain.ports.CheckDigitCalculator;

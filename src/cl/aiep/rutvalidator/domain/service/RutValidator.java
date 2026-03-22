@@ -1,4 +1,4 @@
-// Valida el RUT completo: formatea, parsea, verifica que el número tenga solo dígitos, calcula el DV correcto y lo compara con el DV ingresado.
+// Servicio encargado de validar un RUT completo: formatea la entrada, separa número y dígito verificador, calcula el DV correcto, compara el resultado y registra la operación.
 package cl.aiep.rutvalidator.domain.service;
 
 import cl.aiep.rutvalidator.domain.model.Rut;

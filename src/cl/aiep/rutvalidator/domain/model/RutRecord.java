@@ -1,3 +1,4 @@
+// Clase modelo que representa un registro de operación sobre un RUT, almacenando número, dígito verificador, RUT completo y tipo de operación realizada.
 package cl.aiep.rutvalidator.domain.model;
 
 public class RutRecord {

@@ -1,3 +1,4 @@
+// Servicio encargado de generar el dígito verificador de un número de RUT, construir el RUT completo y registrar la operación realizada.
 package cl.aiep.rutvalidator.domain.service;
 
 import cl.aiep.rutvalidator.domain.model.Rut;

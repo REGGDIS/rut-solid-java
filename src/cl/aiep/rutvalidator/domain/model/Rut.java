@@ -1,4 +1,4 @@
-// Representa un RUT ya separado en número y dígito verificador.
+// Clase modelo que representa un RUT separado en número y dígito verificador.
 package cl.aiep.rutvalidator.domain.model;
 
 public class Rut {

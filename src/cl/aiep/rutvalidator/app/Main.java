@@ -1,4 +1,4 @@
-// Clase principal que se encarga de pedir el RUT al usuario, crear las dependencias, ejecutar la validación y mostrar el resultado.
+// Clase principal que interactúa con el usuario por consola, muestra el menú de opciones, crea las dependencias del sistema y ejecuta la validación, generación de dígito verificador y listado de registros
 package cl.aiep.rutvalidator.app;
 
 import java.util.List;
@@ -34,17 +34,31 @@ public class Main {
 
         do {
             System.out.println("\n=== SISTEMA RUT CHILENO ===");
-            System.out.println("1. Validar RUT");
+            System.out.println("1. Validar RUT completo");
             System.out.println("2. Calcular dígito verificador desde número de RUT");
             System.out.println("3. Listar registros guardados");
             System.out.println("0. Salir");
-            System.out.print("Seleccione una opción: ");
 
-            option = Integer.parseInt(scanner.nextLine());
+            String inputOption;
+            boolean opcionValida;
+
+            do {
+                System.out.print("Seleccione una opción: ");
+                inputOption = scanner.nextLine().trim();
+
+                if (!inputOption.matches("[0-3]")) {
+                    System.out.println("Opción inválida. Debe ingresar 0, 1, 2 o 3.");
+                    opcionValida = false;
+                } else {
+                    opcionValida = true;
+                }
+            } while (!opcionValida);
+
+            option = Integer.parseInt(inputOption);
 
             switch (option) {
                 case 1:
-                    System.out.print("Ingrese un RUT (ej: 12.345.678-5): ");
+                    System.out.print("Ingrese un RUT completo (ej: 12.345.678-5): ");
                     String rutIngresado = scanner.nextLine();
 
                     boolean isValid = validator.isValid(rutIngresado);
@@ -57,13 +71,14 @@ public class Main {
                     break;
 
                 case 2:
-                    System.out.print("Ingrese solo el número de RUT, sin dígito verificador): ");
+                    System.out.print("Ingrese solo el número del RUT, sin dígito verificador: ");
                     String rutNumber = scanner.nextLine().replace(".", "").replace("-", "").trim();
 
                     try {
                         Rut generatedRut = generator.generate(rutNumber);
                         System.out.println("Dígito verificador calculado: " + generatedRut.getDv());
-                    } catch (IllegalArgumentException e) {
+                        System.out.println("RUT completo: " + generatedRut.getFullRut());
+                    } catch (Exception e) {
                         System.out.println("Error: " + e.getMessage());
                     }
                     break;
@@ -90,6 +105,7 @@ public class Main {
                 default:
                     System.out.println("Opción no válida.");
             }
+
         } while (option != 0);
 
         scanner.close();

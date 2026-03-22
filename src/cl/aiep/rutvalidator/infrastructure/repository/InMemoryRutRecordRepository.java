@@ -1,3 +1,4 @@
+// Implementación en memoria del repositorio de registros de RUT, utilizada como almacenamiento temporal y base para una futura integración con base de datos.
 package cl.aiep.rutvalidator.infrastructure.repository;
 
 import java.util.ArrayList;
