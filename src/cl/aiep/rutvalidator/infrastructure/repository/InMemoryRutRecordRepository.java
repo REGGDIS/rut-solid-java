@@ -1,4 +1,4 @@
-// Implementación en memoria del repositorio de registros de RUT, utilizada como almacenamiento temporal y base para una futura integración con base de datos.
+// Implementación en memoria del repositorio de registros de RUT, utilizada como almacenamiento temporal.
 package cl.aiep.rutvalidator.infrastructure.repository;
 
 import java.util.ArrayList;
@@ -19,6 +19,32 @@ public class InMemoryRutRecordRepository implements RutRecordRepository {
     @Override
     public List<RutRecord> findAll() {
         return new ArrayList<>(records);
+    }
+
+    @Override
+    public List<RutRecord> findByOperationType(String operatioType) {
+        List<RutRecord> filteredRecords = new ArrayList<>();
+
+        for (RutRecord record : records) {
+            if (record.getOperationType().equalsIgnoreCase(operatioType)) {
+                filteredRecords.add(record);
+            }
+        }
+
+        return filteredRecords;
+    }
+
+    @Override
+    public List<RutRecord> findByFullRut(String fullRut) {
+        List<RutRecord> filteredRecords = new ArrayList<>();
+
+        for (RutRecord record : records) {
+            if (record.getFullRut().equalsIgnoreCase(fullRut)) {
+                filteredRecords.add(record);
+            }
+        }
+
+        return filteredRecords;
     }
 
 }

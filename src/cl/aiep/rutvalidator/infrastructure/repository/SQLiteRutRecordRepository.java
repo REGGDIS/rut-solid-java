@@ -67,4 +67,75 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
 
         return records;
     }
+
+    @Override
+    public List<RutRecord> findByOperationType(String operationType) {
+        List<RutRecord> records = new ArrayList<>();
+
+        String sql = """
+                SELECT number, dv, full_rut, operation_type
+                FROM rut_records
+                WHERE operation_type = ?
+                ORDER BY id DESC
+                """;
+
+        try (Connection connection = DatabaseConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, operationType);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    RutRecord record = new RutRecord(
+                            resultSet.getString("number"),
+                            resultSet.getString("dv"),
+                            resultSet.getString("full_rut"),
+                            resultSet.getString("operation_type"));
+
+                    records.add(record);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al buscar registros por tipo de operación: " + e.getMessage());
+        }
+
+        return records;
+    }
+
+    @Override
+    public List<RutRecord> findByFullRut(String fullRut) {
+        List<RutRecord> records = new ArrayList<>();
+
+        String sql = """
+                SELECT number, dv, full_rut, operation_type
+                FROM rut_records
+                WHERE full_rut = ?
+                ORDER BY id DESC
+                """;
+
+        try (Connection connection = DatabaseConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, fullRut);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    RutRecord record = new RutRecord(
+                            resultSet.getString("number"),
+                            resultSet.getString("dv"),
+                            resultSet.getString("full_rut"),
+                            resultSet.getString("operation_type"));
+
+                    records.add(record);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al buscar registro por RUT: " + e.getMessage());
+        }
+
+        return records;
+    }
+
 }

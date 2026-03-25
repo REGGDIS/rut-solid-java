@@ -49,7 +49,7 @@ public class RutValidator implements DocumentValidator {
                     rut.getNumber(),
                     rut.getDv(),
                     rut.getFullRut(),
-                    "VALIDACIÓN"));
+                    "VALIDACION"));
 
             return result;
         } catch (Exception e) {

@@ -1,4 +1,4 @@
-// Interfaz que define las operaciones de persistencia para guardar y recuperar registros de RUT, dejando preparada la futura integración con una base de datos.
+// Interfaz que define las operaciones de persistencia para guardar y recuperar registros de RUT.
 package cl.aiep.rutvalidator.domain.ports;
 
 import java.util.List;
@@ -8,4 +8,8 @@ public interface RutRecordRepository {
     void save(RutRecord record);
 
     List<RutRecord> findAll();
+
+    List<RutRecord> findByOperationType(String operationType);
+
+    List<RutRecord> findByFullRut(String fullRut);
 }

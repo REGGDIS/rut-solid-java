@@ -42,6 +42,8 @@ public class Main {
             System.out.println("1. Validar RUT");
             System.out.println("2. Calcular dígito verificador desde número de RUT");
             System.out.println("3. Listar registros guardados");
+            System.out.println("4. Buscar registros por tipo de operación");
+            System.out.println("5. Buscar registro por RUT completo");
             System.out.println("0. Salir");
 
             String inputOption;
@@ -51,8 +53,8 @@ public class Main {
                 System.out.print("Seleccione una opción: ");
                 inputOption = scanner.nextLine().trim();
 
-                if (!inputOption.matches("[0-3]")) {
-                    System.out.println("Opción inválida. Debe ingresar 0, 1, 2 o 3.");
+                if (!inputOption.matches("[0-5]")) {
+                    System.out.println("Opción inválida. Debe ingresar 0, 1, 2, 3, 4 o 5.");
                     opcionValida = false;
                 } else {
                     opcionValida = true;
@@ -113,6 +115,37 @@ public class Main {
                     }
                     break;
 
+                case 4:
+                    System.out.print("Ingrese el tipo de operación a buscar (VALIDACION o GENERACION_DV): ");
+                    String operationType = scanner.nextLine().trim().toUpperCase();
+
+                    if (operationType.isEmpty()) {
+                        System.out.println("Error: debe ingresar un tipo de operación.");
+                        break;
+                    }
+
+                    mostrarRegistros(repository.findByOperationType(operationType));
+                    break;
+
+                case 5:
+                    System.out.print("Ingrese el RUT completo a buscar (ej: 12.345.678-5 o 123456785): ");
+                    String fullRutInput = scanner.nextLine().trim();
+
+                    if (fullRutInput.isEmpty()) {
+                        System.out.println("Error: debe ingresar un RUT completo.");
+                        break;
+                    }
+
+                    String fullRut = normalizarRutCompleto(fullRutInput);
+
+                    if (fullRut.isEmpty()) {
+                        System.out.println("Error: el formato del RUT ingresado no es válido.");
+                        break;
+                    }
+
+                    mostrarRegistros(repository.findByFullRut(fullRut));
+                    break;
+
                 case 0:
                     System.out.println("Saliendo del sistema...");
                     break;
@@ -124,5 +157,41 @@ public class Main {
         } while (option != 0);
 
         scanner.close();
+    }
+
+    private static void mostrarRegistros(List<RutRecord> records) {
+        if (records.isEmpty()) {
+            System.out.println("No se encontraron registros.");
+        } else {
+            System.out.println("\n=== REGISTROS ===");
+            for (RutRecord record : records) {
+                System.out.println(
+                        "Operación: " + record.getOperationType()
+                                + " | RUT: " + record.getFullRut());
+            }
+        }
+    }
+
+    private static String normalizarRutCompleto(String input) {
+        if (input == null) {
+            return "";
+        }
+
+        String cleaned = input
+                .replace(".", "")
+                .replace("-", "")
+                .replace(" ", "")
+                .trim()
+                .toUpperCase();
+
+        if (cleaned.length() < 2) {
+            return ""; // Un RUT completo debe tener al menos 2 caracteres (número + dígito
+                       // verificador)
+        }
+
+        String number = cleaned.substring(0, cleaned.length() - 1);
+        String dv = cleaned.substring(cleaned.length() - 1);
+
+        return number + "-" + dv;
     }
 }
