@@ -1,4 +1,3 @@
-// Clase principal que interactúa con el usuario por consola, muestra el menú de opciones, crea las dependencias del sistema y ejecuta la validación, generación de dígito verificador y listado de registros
 package cl.aiep.rutvalidator.app;
 
 import java.util.List;
@@ -13,19 +12,25 @@ import cl.aiep.rutvalidator.domain.ports.RutRecordRepository;
 import cl.aiep.rutvalidator.domain.service.RutGenerator;
 import cl.aiep.rutvalidator.domain.service.RutValidator;
 import cl.aiep.rutvalidator.infrastructure.calculator.Modulo11RutCalculator;
+import cl.aiep.rutvalidator.infrastructure.database.DatabaseConnection;
 import cl.aiep.rutvalidator.infrastructure.formatter.RutFormatter;
 import cl.aiep.rutvalidator.infrastructure.parser.RutParser;
-import cl.aiep.rutvalidator.infrastructure.repository.InMemoryRutRecordRepository;
+import cl.aiep.rutvalidator.infrastructure.repository.SQLiteRutRecordRepository;
 
+// Clase principal que interactúa con el usuario por consola, muestra el menú de opciones,
+// crea las dependencias del sistema y ejecuta la validación, generación de dígito verificador
+// y listado de registros.
 public class Main {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
+        DatabaseConnection.initializeDatabase();
+
         DocumentFormatter formatter = new RutFormatter();
         CheckDigitCalculator calculator = new Modulo11RutCalculator();
         RutParser parser = new RutParser();
-        RutRecordRepository repository = new InMemoryRutRecordRepository(); // Implementación en memoria del repositorio
+        RutRecordRepository repository = new SQLiteRutRecordRepository();
 
         DocumentValidator validator = new RutValidator(formatter, calculator, parser, repository);
         RutGenerator generator = new RutGenerator(calculator, repository);
@@ -34,7 +39,7 @@ public class Main {
 
         do {
             System.out.println("\n=== SISTEMA RUT CHILENO ===");
-            System.out.println("1. Validar RUT completo");
+            System.out.println("1. Validar RUT");
             System.out.println("2. Calcular dígito verificador desde número de RUT");
             System.out.println("3. Listar registros guardados");
             System.out.println("0. Salir");
@@ -59,7 +64,12 @@ public class Main {
             switch (option) {
                 case 1:
                     System.out.print("Ingrese un RUT completo (ej: 12.345.678-5): ");
-                    String rutIngresado = scanner.nextLine();
+                    String rutIngresado = scanner.nextLine().trim();
+
+                    if (rutIngresado.isEmpty()) {
+                        System.out.println("Error: debe ingresar un RUT.");
+                        break;
+                    }
 
                     boolean isValid = validator.isValid(rutIngresado);
 
@@ -73,6 +83,11 @@ public class Main {
                 case 2:
                     System.out.print("Ingrese solo el número del RUT, sin dígito verificador: ");
                     String rutNumber = scanner.nextLine().replace(".", "").replace("-", "").trim();
+
+                    if (rutNumber.isEmpty()) {
+                        System.out.println("Error: debe ingresar el número del RUT.");
+                        break;
+                    }
 
                     try {
                         Rut generatedRut = generator.generate(rutNumber);

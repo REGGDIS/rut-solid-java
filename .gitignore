@@ -7,6 +7,11 @@ bin/
 build/
 target/
 
+# Base de datos SQLite
+*.db
+*.db-shm
+*.db-wal
+
 # Logs
 *.log
 
