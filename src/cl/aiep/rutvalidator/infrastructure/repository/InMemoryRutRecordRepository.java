@@ -47,4 +47,18 @@ public class InMemoryRutRecordRepository implements RutRecordRepository {
         return filteredRecords;
     }
 
+    @Override
+    public List<RutRecord> findByNumberRange(int minNumber, int maxNumber) {
+        List<RutRecord> filteredRecords = new ArrayList<>();
+
+        for (RutRecord record : records) {
+            int currentNumber = Integer.parseInt(record.getNumber());
+
+            if (currentNumber >= minNumber && currentNumber <= maxNumber) {
+                filteredRecords.add(record);
+            }
+        }
+
+        return filteredRecords;
+    }
 }

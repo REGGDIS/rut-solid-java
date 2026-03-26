@@ -12,4 +12,6 @@ public interface RutRecordRepository {
     List<RutRecord> findByOperationType(String operationType);
 
     List<RutRecord> findByFullRut(String fullRut);
+
+    List<RutRecord> findByNumberRange(int minNumber, int maxNumber);
 }

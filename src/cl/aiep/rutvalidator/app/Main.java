@@ -44,6 +44,7 @@ public class Main {
             System.out.println("3. Listar registros guardados");
             System.out.println("4. Buscar registros por tipo de operación");
             System.out.println("5. Buscar registro por RUT completo");
+            System.out.println("6. Buscar registros por rango de numeración");
             System.out.println("0. Salir");
 
             String inputOption;
@@ -53,8 +54,8 @@ public class Main {
                 System.out.print("Seleccione una opción: ");
                 inputOption = scanner.nextLine().trim();
 
-                if (!inputOption.matches("[0-5]")) {
-                    System.out.println("Opción inválida. Debe ingresar 0, 1, 2, 3, 4 o 5.");
+                if (!inputOption.matches("[0-6]")) {
+                    System.out.println("Opción inválida. Debe ingresar 0, 1, 2, 3, 4, 5 o 6.");
                     opcionValida = false;
                 } else {
                     opcionValida = true;
@@ -144,6 +145,34 @@ public class Main {
                     }
 
                     mostrarRegistros(repository.findByFullRut(fullRut));
+                    break;
+
+                case 6:
+                    System.out.println("Ingrese el número mínimo del rango: ");
+                    String minInput = scanner.nextLine().trim();
+
+                    System.out.println("Ingrese el número máximo del rango: ");
+                    String maxInput = scanner.nextLine().trim();
+
+                    if (minInput.isEmpty() || maxInput.isEmpty()) {
+                        System.out.println("Error: debe ingresar ambos valores para el rango.");
+                        break;
+                    }
+
+                    if (!minInput.matches("\\d+") || !maxInput.matches("\\d+")) {
+                        System.out.println("Error: los valores del rango deben contener solo dígitos.");
+                        break;
+                    }
+
+                    int minNumber = Integer.parseInt(minInput);
+                    int maxNumber = Integer.parseInt(maxInput);
+
+                    if (minNumber > maxNumber) {
+                        System.out.println("Error: el número mínimo no puede ser mayor que el máximo.");
+                        break;
+                    }
+
+                    mostrarRegistros(repository.findByNumberRange(minNumber, maxNumber));
                     break;
 
                 case 0:

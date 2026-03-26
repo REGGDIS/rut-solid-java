@@ -138,4 +138,40 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
         return records;
     }
 
+    @Override
+    public List<RutRecord> findByNumberRange(int minNumber, int maxNumber) {
+        List<RutRecord> records = new ArrayList<>();
+
+        String sql = """
+                SELECT number, dv, full_rut, operation_type
+                FROM rut_records
+                WHERE CAST(number AS INTEGER) BETWEEN ? AND ?
+                ORDER BY CAST(number AS INTEGER) ASC
+                """;
+
+        try (Connection connection = DatabaseConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, minNumber);
+            statement.setInt(2, maxNumber);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    RutRecord record = new RutRecord(
+                            resultSet.getString("number"),
+                            resultSet.getString("dv"),
+                            resultSet.getString("full_rut"),
+                            resultSet.getString("operation_type"));
+
+                    records.add(record);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al buscar registros por rango de numeración: " + e.getMessage());
+        }
+
+        return records;
+    }
+
 }
