@@ -42,9 +42,7 @@ public class Main {
             System.out.println("1. Validar RUT");
             System.out.println("2. Calcular dígito verificador desde número de RUT");
             System.out.println("3. Listar registros guardados");
-            System.out.println("4. Buscar registros por tipo de operación");
-            System.out.println("5. Buscar registro por RUT completo");
-            System.out.println("6. Buscar registros por rango de numeración");
+            System.out.println("4. Buscar registros");
             System.out.println("0. Salir");
 
             String inputOption;
@@ -54,8 +52,8 @@ public class Main {
                 System.out.print("Seleccione una opción: ");
                 inputOption = scanner.nextLine().trim();
 
-                if (!inputOption.matches("[0-6]")) {
-                    System.out.println("Opción inválida. Debe ingresar 0, 1, 2, 3, 4, 5 o 6.");
+                if (!inputOption.matches("[0-4]")) {
+                    System.out.println("Opción inválida. Debe ingresar 0, 1, 2, 3 o 4.");
                     opcionValida = false;
                 } else {
                     opcionValida = true;
@@ -106,78 +104,11 @@ public class Main {
                     break;
 
                 case 3:
-                    List<RutRecord> records = repository.findAll();
-
-                    if (records.isEmpty()) {
-                        System.out.println("No hay registros guardados.");
-                    } else {
-                        System.out.println("\n=== REGISTROS ===");
-                        for (RutRecord record : records) {
-                            System.out.println(
-                                    "Operación: " + record.getOperationType()
-                                            + " | Resultado: " + record.getValidationResult()
-                                            + " | RUT: " + record.getFullRut());
-                        }
-                    }
+                    mostrarRegistros(repository.findAll());
                     break;
 
                 case 4:
-                    System.out.print("Ingrese el tipo de operación a buscar (VALIDACION o GENERACION_DV): ");
-                    String operationType = scanner.nextLine().trim().toUpperCase();
-
-                    if (operationType.isEmpty()) {
-                        System.out.println("Error: debe ingresar un tipo de operación.");
-                        break;
-                    }
-
-                    mostrarRegistros(repository.findByOperationType(operationType));
-                    break;
-
-                case 5:
-                    System.out.print("Ingrese el RUT completo a buscar (ej: 12.345.678-5 o 123456785): ");
-                    String fullRutInput = scanner.nextLine().trim();
-
-                    if (fullRutInput.isEmpty()) {
-                        System.out.println("Error: debe ingresar un RUT completo.");
-                        break;
-                    }
-
-                    String fullRut = normalizarRutCompleto(fullRutInput);
-
-                    if (fullRut.isEmpty()) {
-                        System.out.println("Error: el formato del RUT ingresado no es válido.");
-                        break;
-                    }
-
-                    mostrarRegistros(repository.findByFullRut(fullRut));
-                    break;
-
-                case 6:
-                    System.out.println("Ingrese el número mínimo del rango: ");
-                    String minInput = scanner.nextLine().trim();
-
-                    System.out.println("Ingrese el número máximo del rango: ");
-                    String maxInput = scanner.nextLine().trim();
-
-                    if (minInput.isEmpty() || maxInput.isEmpty()) {
-                        System.out.println("Error: debe ingresar ambos valores para el rango.");
-                        break;
-                    }
-
-                    if (!minInput.matches("\\d+") || !maxInput.matches("\\d+")) {
-                        System.out.println("Error: los valores del rango deben contener solo dígitos.");
-                        break;
-                    }
-
-                    int minNumber = Integer.parseInt(minInput);
-                    int maxNumber = Integer.parseInt(maxInput);
-
-                    if (minNumber > maxNumber) {
-                        System.out.println("Error: el número mínimo no puede ser mayor que el máximo.");
-                        break;
-                    }
-
-                    mostrarRegistros(repository.findByNumberRange(minNumber, maxNumber));
+                    mostrarMenuBusqueda(scanner, repository);
                     break;
 
                 case 0:
@@ -221,6 +152,97 @@ public class Main {
                 System.out.println("Respuesta inválida. Debe ingresar S o N.");
             }
         }
+    }
+
+    private static void mostrarMenuBusqueda(Scanner scanner, RutRecordRepository repository) {
+        int opcionBusqueda = -1;
+
+        do {
+            System.out.println("\n=== BÚSQUEDA DE REGISTROS ===");
+            System.out.println("1. Buscar por tipo de operación");
+            System.out.println("2. Buscar por RUT completo");
+            System.out.println("3. Buscar por rango de numeración");
+            System.out.println("0. Volver al menú principal");
+
+            System.out.print("Seleccione una opción de búsqueda: ");
+            String input = scanner.nextLine().trim();
+
+            if (!input.matches("[0-3]")) {
+                System.out.println("Opción inválida. Debe ingresar 0, 1, 2 o 3.");
+                continue;
+            }
+
+            opcionBusqueda = Integer.parseInt(input);
+
+            switch (opcionBusqueda) {
+                case 1:
+                    System.out.print("Ingrese el tipo de operación a buscar (VALIDACION o GENERACION_DV): ");
+                    String operationType = scanner.nextLine().trim().toUpperCase();
+
+                    if (operationType.isEmpty()) {
+                        System.out.println("Error: debe ingresar un tipo de operación.");
+                        break;
+                    }
+
+                    mostrarRegistros(repository.findByOperationType(operationType));
+                    break;
+
+                case 2:
+                    System.out.print("Ingrese el RUT completo a buscar (ej: 12.345.678-5 o 123456785): ");
+                    String fullRutInput = scanner.nextLine().trim();
+
+                    if (fullRutInput.isEmpty()) {
+                        System.out.println("Error: debe ingresar un RUT completo.");
+                        break;
+                    }
+
+                    String fullRut = normalizarRutCompleto(fullRutInput);
+
+                    if (fullRut.isEmpty()) {
+                        System.out.println("Error: el formato del RUT ingresado no es válido.");
+                        break;
+                    }
+
+                    mostrarRegistros(repository.findByFullRut(fullRut));
+                    break;
+
+                case 3:
+                    System.out.print("Ingrese el número mínimo del rango: ");
+                    String minInput = scanner.nextLine().trim();
+
+                    System.out.print("Ingrese el número máximo del rango: ");
+                    String maxInput = scanner.nextLine().trim();
+
+                    if (minInput.isEmpty() || maxInput.isEmpty()) {
+                        System.out.println("Error: debe ingresar ambos valores para el rango.");
+                        break;
+                    }
+
+                    if (!minInput.matches("\\d+") || !maxInput.matches("\\d+")) {
+                        System.out.println("Error: los valores del rango deben contener solo dígitos.");
+                        break;
+                    }
+
+                    int minNumber = Integer.parseInt(minInput);
+                    int maxNumber = Integer.parseInt(maxInput);
+
+                    if (minNumber > maxNumber) {
+                        System.out.println("Error: el número mínimo no puede ser mayor que el máximo.");
+                        break;
+                    }
+
+                    mostrarRegistros(repository.findByNumberRange(minNumber, maxNumber));
+                    break;
+
+                case 0:
+                    System.out.println("Volviendo al menú principal...");
+                    break;
+
+                default:
+                    System.out.println("Opción no válida.");
+            }
+
+        } while (opcionBusqueda != 0);
     }
 
     private static String normalizarRutCompleto(String input) {
