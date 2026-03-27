@@ -81,6 +81,8 @@ public class Main {
                     } else {
                         System.out.println("Resultado: El RUT es inválido.");
                     }
+
+                    manejarFlujoPostInsercion(scanner, repository);
                     break;
 
                 case 2:
@@ -96,6 +98,8 @@ public class Main {
                         Rut generatedRut = generator.generate(rutNumber);
                         System.out.println("Dígito verificador calculado: " + generatedRut.getDv());
                         System.out.println("RUT completo: " + generatedRut.getFullRut());
+
+                        manejarFlujoPostInsercion(scanner, repository);
                     } catch (Exception e) {
                         System.out.println("Error: " + e.getMessage());
                     }
@@ -203,6 +207,22 @@ public class Main {
         }
     }
 
+    private static void manejarFlujoPostInsercion(Scanner scanner, RutRecordRepository repository) {
+        while (true) {
+            System.out.print("\n¿Desea ingresar un nuevo número de RUT para operar? (S/N): ");
+            String respuesta = scanner.nextLine().trim().toUpperCase();
+
+            if (respuesta.equals("S")) {
+                break;
+            } else if (respuesta.equals("N")) {
+                mostrarRegistros(repository.findAll());
+                break;
+            } else {
+                System.out.println("Respuesta inválida. Debe ingresar S o N.");
+            }
+        }
+    }
+
     private static String normalizarRutCompleto(String input) {
         if (input == null) {
             return "";
@@ -216,8 +236,7 @@ public class Main {
                 .toUpperCase();
 
         if (cleaned.length() < 2) {
-            return ""; // Un RUT completo debe tener al menos 2 caracteres (número + dígito
-                       // verificador)
+            return "";
         }
 
         String number = cleaned.substring(0, cleaned.length() - 1);
