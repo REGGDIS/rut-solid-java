@@ -11,6 +11,12 @@ public class DatabaseConnection {
     private static final String URL = "jdbc:sqlite:rut_app.db";
 
     public static Connection getConnection() throws SQLException {
+        try {
+            Class.forName("org.sqlite.JDBC");
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("No se encontró el driver de SQLite: ", e);
+        }
+
         return DriverManager.getConnection(URL);
     }
 
@@ -22,9 +28,10 @@ public class DatabaseConnection {
                     dv TEXT NOT NULL,
                     full_rut TEXT NOT NULL,
                     operation_type TEXT NOT NULL,
+                    validation_result TEXT,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
-                    """;
+                """;
 
         try (Connection connection = getConnection();
                 Statement statement = connection.createStatement()) {

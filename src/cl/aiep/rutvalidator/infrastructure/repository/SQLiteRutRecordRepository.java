@@ -18,8 +18,8 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
     @Override
     public void save(RutRecord record) {
         String sql = """
-                INSERT INTO rut_records (number, dv, full_rut, operation_type)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO rut_records (number, dv, full_rut, operation_type, validation_result)
+                VALUES (?, ?, ?, ?, ?)
                 """;
 
         try (Connection connection = DatabaseConnection.getConnection();
@@ -29,6 +29,7 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
             statement.setString(2, record.getDv());
             statement.setString(3, record.getFullRut());
             statement.setString(4, record.getOperationType());
+            statement.setString(5, record.getValidationResult());
 
             statement.executeUpdate();
 
@@ -42,7 +43,7 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
         List<RutRecord> records = new ArrayList<>();
 
         String sql = """
-                SELECT number, dv, full_rut, operation_type
+                SELECT number, dv, full_rut, operation_type, validation_result
                 FROM rut_records
                 ORDER BY id DESC
                 """;
@@ -56,8 +57,8 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
                         resultSet.getString("number"),
                         resultSet.getString("dv"),
                         resultSet.getString("full_rut"),
-                        resultSet.getString("operation_type"));
-
+                        resultSet.getString("operation_type"),
+                        resultSet.getString("validation_result"));
                 records.add(record);
             }
 
@@ -73,7 +74,7 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
         List<RutRecord> records = new ArrayList<>();
 
         String sql = """
-                SELECT number, dv, full_rut, operation_type
+                SELECT number, dv, full_rut, operation_type, validation_result
                 FROM rut_records
                 WHERE operation_type = ?
                 ORDER BY id DESC
@@ -90,8 +91,8 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
                             resultSet.getString("number"),
                             resultSet.getString("dv"),
                             resultSet.getString("full_rut"),
-                            resultSet.getString("operation_type"));
-
+                            resultSet.getString("operation_type"),
+                            resultSet.getString("validation_result"));
                     records.add(record);
                 }
             }
@@ -108,7 +109,7 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
         List<RutRecord> records = new ArrayList<>();
 
         String sql = """
-                SELECT number, dv, full_rut, operation_type
+                SELECT number, dv, full_rut, operation_type, validation_result
                 FROM rut_records
                 WHERE full_rut = ?
                 ORDER BY id DESC
@@ -125,14 +126,14 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
                             resultSet.getString("number"),
                             resultSet.getString("dv"),
                             resultSet.getString("full_rut"),
-                            resultSet.getString("operation_type"));
-
+                            resultSet.getString("operation_type"),
+                            resultSet.getString("validation_result"));
                     records.add(record);
                 }
             }
 
         } catch (SQLException e) {
-            System.out.println("Error al buscar registro por RUT: " + e.getMessage());
+            System.out.println("Error al buscar registros por RUT: " + e.getMessage());
         }
 
         return records;
@@ -143,7 +144,7 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
         List<RutRecord> records = new ArrayList<>();
 
         String sql = """
-                SELECT number, dv, full_rut, operation_type
+                SELECT number, dv, full_rut, operation_type, validation_result
                 FROM rut_records
                 WHERE CAST(number AS INTEGER) BETWEEN ? AND ?
                 ORDER BY CAST(number AS INTEGER) ASC
@@ -161,8 +162,8 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
                             resultSet.getString("number"),
                             resultSet.getString("dv"),
                             resultSet.getString("full_rut"),
-                            resultSet.getString("operation_type"));
-
+                            resultSet.getString("operation_type"),
+                            resultSet.getString("validation_result"));
                     records.add(record);
                 }
             }
@@ -173,5 +174,4 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
 
         return records;
     }
-
 }

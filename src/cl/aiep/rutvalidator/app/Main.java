@@ -111,6 +111,7 @@ public class Main {
                         for (RutRecord record : records) {
                             System.out.println(
                                     "Operación: " + record.getOperationType()
+                                            + " | Resultado: " + record.getValidationResult()
                                             + " | RUT: " + record.getFullRut());
                         }
                     }
@@ -196,6 +197,7 @@ public class Main {
             for (RutRecord record : records) {
                 System.out.println(
                         "Operación: " + record.getOperationType()
+                                + " | Resultado: " + record.getValidationResult()
                                 + " | RUT: " + record.getFullRut());
             }
         }
