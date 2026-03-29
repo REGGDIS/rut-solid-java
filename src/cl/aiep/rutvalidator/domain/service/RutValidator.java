@@ -50,7 +50,8 @@ public class RutValidator implements DocumentValidator {
                     rut.getDv(),
                     rut.getFullRut(),
                     "VALIDACION",
-                    result ? "VALIDO" : "NO_VALIDO"));
+                    result ? "VALIDO" : "NO_VALIDO",
+                    null));
 
             return result;
         } catch (Exception e) {

@@ -1,4 +1,4 @@
-// Clase modelo que representa un registro de operación sobre un RUT, almacenando número, dígito verificador, RUT completo, tipo de operación y resultado de validación.
+// Clase modelo que representa un registro de operación sobre un RUT, almacenando número, dígito verificador, RUT completo, tipo de operación y resultado de validación y fecha/hora de creación.
 package cl.aiep.rutvalidator.domain.model;
 
 public class RutRecord {
@@ -7,13 +7,16 @@ public class RutRecord {
     private final String fullRut;
     private final String operationType;
     private String validationResult;
+    private final String createdAt;
 
-    public RutRecord(String number, String dv, String fullRut, String operationType, String validationResult) {
+    public RutRecord(String number, String dv, String fullRut, String operationType, String validationResult,
+            String createdAt) {
         this.number = number;
         this.dv = dv;
         this.fullRut = fullRut;
         this.operationType = operationType;
         this.validationResult = validationResult;
+        this.createdAt = createdAt;
     }
 
     public String getNumber() {
@@ -36,4 +39,7 @@ public class RutRecord {
         return validationResult;
     }
 
+    public String getCreatedAt() {
+        return createdAt;
+    }
 }

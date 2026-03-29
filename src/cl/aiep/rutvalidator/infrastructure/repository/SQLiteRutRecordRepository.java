@@ -43,7 +43,7 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
         List<RutRecord> records = new ArrayList<>();
 
         String sql = """
-                SELECT number, dv, full_rut, operation_type, validation_result
+                SELECT number, dv, full_rut, operation_type, validation_result, created_at
                 FROM rut_records
                 ORDER BY id DESC
                 """;
@@ -53,13 +53,7 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
                 ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                RutRecord record = new RutRecord(
-                        resultSet.getString("number"),
-                        resultSet.getString("dv"),
-                        resultSet.getString("full_rut"),
-                        resultSet.getString("operation_type"),
-                        resultSet.getString("validation_result"));
-                records.add(record);
+                records.add(mapRecord(resultSet));
             }
 
         } catch (SQLException e) {
@@ -74,7 +68,7 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
         List<RutRecord> records = new ArrayList<>();
 
         String sql = """
-                SELECT number, dv, full_rut, operation_type, validation_result
+                SELECT number, dv, full_rut, operation_type, validation_result, created_at
                 FROM rut_records
                 WHERE operation_type = ?
                 ORDER BY id DESC
@@ -87,13 +81,7 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    RutRecord record = new RutRecord(
-                            resultSet.getString("number"),
-                            resultSet.getString("dv"),
-                            resultSet.getString("full_rut"),
-                            resultSet.getString("operation_type"),
-                            resultSet.getString("validation_result"));
-                    records.add(record);
+                    records.add(mapRecord(resultSet));
                 }
             }
 
@@ -109,7 +97,7 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
         List<RutRecord> records = new ArrayList<>();
 
         String sql = """
-                SELECT number, dv, full_rut, operation_type, validation_result
+                SELECT number, dv, full_rut, operation_type, validation_result, created_at
                 FROM rut_records
                 WHERE full_rut = ?
                 ORDER BY id DESC
@@ -122,13 +110,7 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    RutRecord record = new RutRecord(
-                            resultSet.getString("number"),
-                            resultSet.getString("dv"),
-                            resultSet.getString("full_rut"),
-                            resultSet.getString("operation_type"),
-                            resultSet.getString("validation_result"));
-                    records.add(record);
+                    records.add(mapRecord(resultSet));
                 }
             }
 
@@ -144,7 +126,7 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
         List<RutRecord> records = new ArrayList<>();
 
         String sql = """
-                SELECT number, dv, full_rut, operation_type, validation_result
+                SELECT number, dv, full_rut, operation_type, validation_result, created_at
                 FROM rut_records
                 WHERE CAST(number AS INTEGER) BETWEEN ? AND ?
                 ORDER BY CAST(number AS INTEGER) ASC
@@ -158,13 +140,7 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
 
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
-                    RutRecord record = new RutRecord(
-                            resultSet.getString("number"),
-                            resultSet.getString("dv"),
-                            resultSet.getString("full_rut"),
-                            resultSet.getString("operation_type"),
-                            resultSet.getString("validation_result"));
-                    records.add(record);
+                    records.add(mapRecord(resultSet));
                 }
             }
 
@@ -173,5 +149,45 @@ public class SQLiteRutRecordRepository implements RutRecordRepository {
         }
 
         return records;
+    }
+
+    @Override
+    public List<RutRecord> findByCreatedAtDateRange(String startDate, String endDate) {
+        List<RutRecord> records = new ArrayList<>();
+
+        String sql = """
+                SELECT number, dv, full_rut, operation_type, validation_result, created_at
+                FROM rut_records
+                WHERE date(created_at) BETWEEN ? AND ?
+                ORDER BY created_at ASC
+                """;
+
+        try (Connection connection = DatabaseConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, startDate);
+            statement.setString(2, endDate);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    records.add(mapRecord(resultSet));
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al buscar registros por rango de fechas: " + e.getMessage());
+        }
+
+        return records;
+    }
+
+    private RutRecord mapRecord(ResultSet resultSet) throws SQLException {
+        return new RutRecord(
+                resultSet.getString("number"),
+                resultSet.getString("dv"),
+                resultSet.getString("full_rut"),
+                resultSet.getString("operation_type"),
+                resultSet.getString("validation_result"),
+                resultSet.getString("created_at"));
     }
 }

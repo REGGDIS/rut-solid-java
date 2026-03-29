@@ -1,9 +1,10 @@
-// Interfaz que define las operaciones de persistencia para guardar y recuperar registros de RUT.
 package cl.aiep.rutvalidator.domain.ports;
 
 import java.util.List;
+
 import cl.aiep.rutvalidator.domain.model.RutRecord;
 
+// Interfaz que define las operaciones de persistencia para guardar y recuperar registros de RUT.
 public interface RutRecordRepository {
     void save(RutRecord record);
 
@@ -14,4 +15,6 @@ public interface RutRecordRepository {
     List<RutRecord> findByFullRut(String fullRut);
 
     List<RutRecord> findByNumberRange(int minNumber, int maxNumber);
+
+    List<RutRecord> findByCreatedAtDateRange(String startDate, String endDate);
 }

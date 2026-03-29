@@ -1,4 +1,3 @@
-// Implementación en memoria del repositorio de registros de RUT, utilizada como almacenamiento temporal.
 package cl.aiep.rutvalidator.infrastructure.repository;
 
 import java.util.ArrayList;
@@ -7,6 +6,7 @@ import java.util.List;
 import cl.aiep.rutvalidator.domain.model.RutRecord;
 import cl.aiep.rutvalidator.domain.ports.RutRecordRepository;
 
+// Implementación en memoria del repositorio de registros de RUT.
 public class InMemoryRutRecordRepository implements RutRecordRepository {
 
     private final List<RutRecord> records = new ArrayList<>();
@@ -22,43 +22,59 @@ public class InMemoryRutRecordRepository implements RutRecordRepository {
     }
 
     @Override
-    public List<RutRecord> findByOperationType(String operatioType) {
-        List<RutRecord> filteredRecords = new ArrayList<>();
+    public List<RutRecord> findByOperationType(String operationType) {
+        List<RutRecord> results = new ArrayList<>();
 
         for (RutRecord record : records) {
-            if (record.getOperationType().equalsIgnoreCase(operatioType)) {
-                filteredRecords.add(record);
+            if (record.getOperationType().equalsIgnoreCase(operationType)) {
+                results.add(record);
             }
         }
 
-        return filteredRecords;
+        return results;
     }
 
     @Override
     public List<RutRecord> findByFullRut(String fullRut) {
-        List<RutRecord> filteredRecords = new ArrayList<>();
+        List<RutRecord> results = new ArrayList<>();
 
         for (RutRecord record : records) {
             if (record.getFullRut().equalsIgnoreCase(fullRut)) {
-                filteredRecords.add(record);
+                results.add(record);
             }
         }
 
-        return filteredRecords;
+        return results;
     }
 
     @Override
     public List<RutRecord> findByNumberRange(int minNumber, int maxNumber) {
-        List<RutRecord> filteredRecords = new ArrayList<>();
+        List<RutRecord> results = new ArrayList<>();
 
         for (RutRecord record : records) {
-            int currentNumber = Integer.parseInt(record.getNumber());
-
-            if (currentNumber >= minNumber && currentNumber <= maxNumber) {
-                filteredRecords.add(record);
+            int number = Integer.parseInt(record.getNumber());
+            if (number >= minNumber && number <= maxNumber) {
+                results.add(record);
             }
         }
 
-        return filteredRecords;
+        return results;
+    }
+
+    @Override
+    public List<RutRecord> findByCreatedAtDateRange(String startDate, String endDate) {
+        List<RutRecord> results = new ArrayList<>();
+
+        for (RutRecord record : records) {
+            if (record.getCreatedAt() != null && record.getCreatedAt().length() >= 10) {
+                String recordDate = record.getCreatedAt().substring(0, 10);
+
+                if (recordDate.compareTo(startDate) >= 0 && recordDate.compareTo(endDate) <= 0) {
+                    results.add(record);
+                }
+            }
+        }
+
+        return results;
     }
 }

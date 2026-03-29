@@ -29,7 +29,8 @@ public class RutGenerator {
                 rut.getDv(),
                 rut.getFullRut(),
                 "GENERACION_DV",
-                "DV=" + rut.getDv()));
+                "DV=" + rut.getDv(),
+                null));
 
         return rut;
     }

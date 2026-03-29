@@ -133,7 +133,8 @@ public class Main {
                 System.out.println(
                         "Operación: " + record.getOperationType()
                                 + " | Resultado: " + record.getValidationResult()
-                                + " | RUT: " + record.getFullRut());
+                                + " | RUT: " + record.getFullRut()
+                                + " | Fecha: " + extraerFecha(record.getCreatedAt()));
             }
         }
     }
@@ -162,13 +163,14 @@ public class Main {
             System.out.println("1. Buscar por tipo de operación");
             System.out.println("2. Buscar por RUT completo");
             System.out.println("3. Buscar por rango de numeración");
+            System.out.println("4. Buscar por rango de fecha de ingreso");
             System.out.println("0. Volver al menú principal");
 
             System.out.print("Seleccione una opción de búsqueda: ");
             String input = scanner.nextLine().trim();
 
-            if (!input.matches("[0-3]")) {
-                System.out.println("Opción inválida. Debe ingresar 0, 1, 2 o 3.");
+            if (!input.matches("[0-4]")) {
+                System.out.println("Opción inválida. Debe ingresar 0, 1, 2, 3 o 4.");
                 continue;
             }
 
@@ -234,6 +236,26 @@ public class Main {
                     mostrarRegistros(repository.findByNumberRange(minNumber, maxNumber));
                     break;
 
+                case 4:
+                    System.out.print("Ingrese la fecha inicial (yyyy-MM-dd): ");
+                    String startDate = scanner.nextLine().trim();
+
+                    System.out.print("Ingrese la fecha final (yyyy-MM-dd): ");
+                    String endDate = scanner.nextLine().trim();
+
+                    if (startDate.isEmpty() || endDate.isEmpty()) {
+                        System.out.println("Error: debe ingresar ambas fechas.");
+                        break;
+                    }
+
+                    if (!esFechaValida(startDate) || !esFechaValida(endDate)) {
+                        System.out.println("Error: el formato debe ser yyyy-MM-dd");
+                        break;
+                    }
+
+                    mostrarRegistros(repository.findByCreatedAtDateRange(startDate, endDate));
+                    break;
+
                 case 0:
                     System.out.println("Volviendo al menú principal...");
                     break;
@@ -243,6 +265,17 @@ public class Main {
             }
 
         } while (opcionBusqueda != 0);
+    }
+
+    private static boolean esFechaValida(String fecha) {
+        return fecha.matches("\\d{4}-\\d{2}-\\d{2}");
+    }
+
+    private static String extraerFecha(String createdAt) {
+        if (createdAt == null || createdAt.length() < 10) {
+            return "Sin fecha";
+        }
+        return createdAt.substring(0, 10);
     }
 
     private static String normalizarRutCompleto(String input) {
